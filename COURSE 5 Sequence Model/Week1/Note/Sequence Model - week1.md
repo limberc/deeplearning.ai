@@ -1,21 +1,17 @@
 # Sequence Model
 
-Tutor: Andrew Ng, deeplearning.ai
+Lecturer: Andrew Ng, Author: Zehua Cheng
 
 **Notation**:
 
 - Superscript $[l]$ denotes an object associated with the $l^{th}$ layer. 
-    - Example: $a^{[4]}$ is the $4^{th}$ layer activation. $W^{[5]}$ and $b^{[5]}$ are the $5^{th}$ layer parameters.
-
+  - Example: $a^{[4]}$ is the $4^{th}$ layer activation. $W^{[5]}$ and $b^{[5]}$ are the $5^{th}$ layer parameters.
 - Superscript $(i)$ denotes an object associated with the $i^{th}$ example. 
-    - Example: $x^{(i)}$ is the $i^{th}$ training example input.
-
+  - Example: $x^{(i)}$ is the $i^{th}$ training example input.
 - Superscript $\langle t \rangle$ denotes an object at the $t^{th}$ time-step. 
-    - Example: $x^{\langle t \rangle}$ is the input x at the $t^{th}$ time-step. $x^{(i)\langle t \rangle}$ is the input at the $t^{th}$ timestep of example $i$.
-
+  - Example: $x^{\langle t \rangle}$ is the input x at the $t^{th}$ time-step. $x^{(i)\langle t \rangle}$ is the input at the $t^{th}$ timestep of example $i$.
 - Lowerscript $i$ denotes the $i^{th}$ entry of a vector.
-    - Example: $a^{[l]}_i$ denotes the $i^{th}$ entry of the activations in layer $l$.
-
+  - Example: $a^{[l]}_i$ denotes the $i^{th}$ entry of the activations in layer $l$.
 
 ### Representing Word
 
@@ -39,7 +35,7 @@ P.S: **如果遇到不在您的词汇表中的单词，该怎么办？ **那么�
 
 #### RNN
 
-![RNN](image\RNN.png)
+![RNN](image\RNN-basic.png)
 
 开始的时候，第一个词$X^{<1>}$输入，得到一个输出 $\hat{y}^{<1>}$以及一个$a^{<1>}$ ,$\hat{y}^{<1>}$ 是正经的输出而$a^{<1>}$ 传导到第二个RNN Cell。因此自第二个起，RNN Cell的输出 $\hat{y}^{<T_y>}$ 取决于中间的Hidden Layer以及传入RNN Cell的 $a^{<T_{y-1}>}$ 两个部分。	
 
@@ -59,9 +55,9 @@ Reference
 
 #### 向前传播的基本递归神经网络
 
-如何实现一个RNN：
+![rnn_step_forward](image\rnn.png)
 
-Here's how you can implement an RNN: 
+如何实现一个RNN：
 
 1. 实现一个time-step的RNN所需要的计算。
 2. 在$T_x$ time-steps上实现一个循环，以便一次性处理所有的输入。
@@ -73,6 +69,7 @@ Here's how you can implement an RNN:
 ![rnn_step_forward](image\rnn_step_forward.png)
 
 **Instructions**:
+
 1. Compute the hidden state with tanh activation: $a^{\langle t \rangle} = \tanh(W_{aa} a^{\langle t-1 \rangle} + W_{ax} x^{\langle t \rangle} + b_a)$.
 2. Using your new hidden state $a^{\langle t \rangle}$, compute the prediction $\hat{y}^{\langle t \rangle} = softmax(W_{ya} a^{\langle t \rangle} + b_y)$. We provided you a function: `softmax`.
 3. Store $(a^{\langle t \rangle}, a^{\langle t-1 \rangle}, x^{\langle t \rangle}, parameters)$ in cache
@@ -124,7 +121,20 @@ def rnn_cell_forward(xt, a_prev, parameters):
 
 #### RNN正向传递
 
+
+
 其实可以将RNN视为刚刚构建的单元格的重复。如果您输入的数据序列带10个time-steps，则您将复制RNN信元10次。每个单元将前一个单元的hidden state $(a^{<t-1>})$ 和当前time-step的输入数据$(x^{<t>})$作为输入。它为这个time-step输出一个hidden-state$(a^{<t>})$和一个预测$(y^{<t>})$。
+
+**Instructions**:
+
+1. Create a vector of zeros (aa) that will store all the hidden states computed by the RNN.
+2. Initialize the "next" hidden state as $a_0$(initial hidden state).
+3. Start looping over each time step, your incremental index is $t$:
+   - Update the "next" hidden state and the cache by running `rnn_cell_forward`
+   - Store the "next" hidden state in $a$ ($t^{th}$ position)
+   - Store the prediction in y
+   - Add the cache to the list of caches
+4. Return $a$, $y$ and caches
 
 ```python
 # GRADED FUNCTION: rnn_forward
@@ -184,3 +194,108 @@ def rnn_forward(x, a0, parameters):
     return a, y_pred, caches
 ```
 
+#### LSTM
+
+下图显示了LSTM单元的运作机理。
+
+![rnn_step_forward](image\LSTM.png)
+
+**关于Gate**
+
+**1. Forget Gate**
+
+为了说明这一点，我们假设我们正在阅读一段文字中的单词，并且希望使用LSTM来跟踪语法结构，例如主语是单数还是复数。如果主语从单个单词变成复数单词，我们需要找到一种方法来摆脱先前存储的单数/复数状态的记忆值。
+
+$$\Gamma_f^{\langle t \rangle} = \sigma(W_f[a^{\langle t-1 \rangle}, x^{\langle t \rangle}] + b_f)\tag{1} $$
+
+**2. Update Gate**
+
+一旦我们忘记所讨论的主题是单数的，我们需要找到一种方法来更新它，以反映新主题现在是复数。这是update gate的公式：
+
+$$\Gamma_u^{\langle t \rangle} = \sigma(W_u[a^{\langle t-1 \rangle}, x^{\{t\}}] + b_u)\tag{2} $$ 
+
+
+
+
+
+
+
+
+
+# GRADED FUNCTION: lstm_cell_forward
+
+def lstm_cell_forward(xt, a_prev, c_prev, parameters):
+```python
+"""
+Implement a single forward step of the LSTM-cell as described in Figure (4)
+
+Arguments:
+xt -- your input data at timestep "t", numpy array of shape (n_x, m).
+a_prev -- Hidden state at timestep "t-1", numpy array of shape (n_a, m)
+c_prev -- Memory state at timestep "t-1", numpy array of shape (n_a, m)
+parameters -- python dictionary containing:
+      Wf -- Weight matrix of the forget gate, numpy array of shape (n_a, n_a + n_x)
+      bf -- Bias of the forget gate, numpy array of shape (n_a, 1)
+      Wi -- Weight matrix of the update gate, numpy array of shape (n_a, n_a + n_x)
+      bi -- Bias of the update gate, numpy array of shape (n_a, 1)
+      Wc -- Weight matrix of the first "tanh", numpy array of shape (n_a, n_a + n_x)
+      bc --  Bias of the first "tanh", numpy array of shape (n_a, 1)
+      Wo -- Weight matrix of the output gate, numpy array of shape (n_a, n_a + n_x)
+      bo --  Bias of the output gate, numpy array of shape (n_a, 1)
+      Wy -- Weight matrix relating the hidden-state to the output, numpy array of shape (n_y, n_a)
+      by -- Bias relating the hidden-state to the output, numpy array of shape (n_y, 1)
+                    
+Returns:
+a_next -- next hidden state, of shape (n_a, m)
+c_next -- next memory state, of shape (n_a, m)
+yt_pred -- prediction at timestep "t", numpy array of shape (n_y, m)
+cache -- tuple of values needed for the backward pass, contains (a_next, c_next, a_prev, c_prev, xt, parameters)
+
+Note: ft/it/ot stand for the forget/update/output gates, cct stands for the candidate value (c tilde),
+      c stands for the memory value
+"""
+
+# Retrieve parameters from "parameters"
+Wf = parameters["Wf"]
+bf = parameters["bf"]
+Wi = parameters["Wi"]
+bi = parameters["bi"]
+Wc = parameters["Wc"]
+bc = parameters["bc"]
+Wo = parameters["Wo"]
+bo = parameters["bo"]
+Wy = parameters["Wy"]
+by = parameters["by"]
+
+# Retrieve dimensions from shapes of xt and Wy
+n_x, m = xt.shape
+n_y, n_a = Wy.shape
+
+### START CODE HERE ###
+# Concatenate a_prev and xt (≈3 lines)
+concat = np.empty((n_a + n_x, m))
+concat[: n_a, :] = a_prev
+concat[n_a :, :] = xt
+
+# Compute values for ft, it, cct, c_next, ot, a_next using the formulas given figure (4) (≈6 lines)
+ft = sigmoid(np.dot(Wf, concat) + bf)
+it = sigmoid(np.dot(Wi, concat) + bi)
+cct = np.tanh(np.dot(Wc, concat) + bc)
+c_next = (ft * c_prev) + (it * cct)
+ot = sigmoid(np.dot(Wo, concat) + bo)
+a_next = ot*np.tanh(c_next)
+
+# Compute prediction of the LSTM cell (≈1 line)
+yt_pred = softmax(np.dot(Wy, a_next) + by) 
+### END CODE HERE ###
+
+# store values needed for backward propagation in cache
+cache = (a_next, c_next, a_prev, c_prev, ft, it, cct, ot, xt, parameters)
+
+return a_next, c_next, yt_pred, cache
+```
+#### LSTM的正向传递
+
+现在您已经实现了LSTM的一个步骤，现在可以使用for循环对此进行迭代，以处理一系列$T_x$ 的输入。
+
+![rnn_step_forward](image\LSTM_rnn.png)
