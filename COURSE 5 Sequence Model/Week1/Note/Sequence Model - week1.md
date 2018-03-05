@@ -299,3 +299,60 @@ return a_next, c_next, yt_pred, cache
 现在您已经实现了LSTM的一个步骤，现在可以使用for循环对此进行迭代，以处理一系列$T_x$ 的输入。
 
 ![rnn_step_forward](image\LSTM_rnn.png)
+
+#### 在递归神经网络中的反向传播
+
+在现代深度学习框架中，只需实现正向传递，而框架则负责反向传播，因此大多数深造工程师不需要费心于反向传播的细节。然而，如果你是数学大佬，并且想看看RNN中的后端的细节。 在前面的课程中，您实现了一个简单的(完全连接的)神经网络，您使用反向传播来计算与更新参数的成本有关的导数。同样，在递归神经网络中，可以计算出与成本有关的导数，以便更新参数。逆道具方程相当复杂，我们没有在讲座中导出它们。不过，我们将在下文简要介绍。
+
+
+
+```python
+def rnn_cell_backward(da_next, cache):
+    """
+    Implements the backward pass for the RNN-cell (single time-step).
+
+    Arguments:
+    da_next -- Gradient of loss with respect to next hidden state
+    cache -- python dictionary containing useful values (output of rnn_cell_forward())
+
+    Returns:
+    gradients -- python dictionary containing:
+             dx -- Gradients of input data, of shape (n_x, m)
+             da_prev -- Gradients of previous hidden state, of shape (n_a, m)
+             dWax -- Gradients of input-to-hidden weights, of shape (n_a, n_x)
+             dWaa -- Gradients of hidden-to-hidden weights, of shape (n_a, n_a)
+             dba -- Gradients of bias vector, of shape (n_a, 1)
+    """
+    
+    # Retrieve values from cache
+    (a_next, a_prev, xt, parameters) = cache
+    
+    # Retrieve values from parameters
+    Wax = parameters["Wax"]
+    Waa = parameters["Waa"]
+    Wya = parameters["Wya"]
+    ba = parameters["ba"]
+    by = parameters["by"]
+
+    ### START CODE HERE ###
+    # compute the gradient of tanh with respect to a_next (≈1 line)
+    dtanh = (1 - np.square(a_next)) * da_next
+
+    # compute the gradient of the loss with respect to Wax (≈2 lines)
+    dxt = np.dot(Wax.T, dtanh) 
+    dWax = np.dot(dtanh, xt.T)
+
+    # compute the gradient with respect to Waa (≈2 lines)
+    da_prev = np.dot(Waa.T, dtanh)
+    dWaa = np.dot(dtanh, a_prev.T)
+
+    # compute the gradient with respect to b (≈1 line)
+    dba = np.sum(dtanh, axis = 1, keepdims=True)
+
+    ### END CODE HERE ###
+    
+    # Store the gradients in a python dictionary
+    gradients = {"dxt": dxt, "da_prev": da_prev, "dWax": dWax, "dWaa": dWaa, "dba": dba}
+    
+    return gradients
+```
