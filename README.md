@@ -19,20 +19,17 @@ P.S: This repo **DO NOT HAVE THE ANSWER OF THE HOMEWORK** which respect the hono
 * **[Course 02 video link](https://www.youtube.com/watch?v=1waHlpKiNyY&list=PLkDaE6sCZn6Hn0vK8co82zjQtt3T2Nkqc)**
 * **[Course 03 video link](https://www.youtube.com/watch?v=dFX8k1kXhOw&list=PLkDaE6sCZn6E7jZ9sN_xHwSHOdjUxUW_b)**
 * **[Course 04 video link](https://www.youtube.com/watch?v=ArPaAX_PhIs&list=PLkDaE6sCZn6Gl29AoE31iwdVwSG-KnDzF)**
+* [**Course 05 Video Link**](https://www.youtube.com/playlist?list=PLkDaE6sCZn6F6wUI9tvS_Gw1vaFAx6rd6)
 
-## Original Course Link
+## Original Coursera Link
 
 [Deep Learning Specialization](https://www.coursera.org/specializations/deep-learning)
 
-[Neural Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
-
-[Improving Deep Neural Networks: Hyperparameter tuning, Regularization and Optimization](https://www.coursera.org/learn/deep-neural-network)
-
-[Structuring Machine Learning Projects](https://www.coursera.org/learn/machine-learning-projects)
-
-[Convolutional Neural Networks](https://www.coursera.org/learn/convolutional-neural-networks)
-
-[Sequence Models](https://www.coursera.org/learn/nlp-sequence-models)
+1. [Neural Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
+2. [Improving Deep Neural Networks: Hyperparameter tuning, Regularization and Optimization](https://www.coursera.org/learn/deep-neural-network)
+3. [Structuring Machine Learning Projects](https://www.coursera.org/learn/machine-learning-projects)
+4. [Convolutional Neural Networks](https://www.coursera.org/learn/convolutional-neural-networks)
+5. [Sequence Models](https://www.coursera.org/learn/nlp-sequence-models)
 
 ## Conclusion
 #### Everyone welcome to create pull request if new resource update or if i miss anything :)
